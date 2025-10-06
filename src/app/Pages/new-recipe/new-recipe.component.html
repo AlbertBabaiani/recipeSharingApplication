@@ -1,0 +1,163 @@
+<a routerLink="../" class="btn btn-primary">Back</a>
+
+<h1 class="text-center my-4">
+  {{ isEditing() ? "Update the " : "Add new " }} recipe
+</h1>
+
+<form [formGroup]="form" (ngSubmit)="submitForm()">
+  @if(form.invalid && isSubmitted()){
+
+  <p class="text-danger fs-4 my-3 text-center" role="alert">
+    Some inputs are missing or incorrect
+  </p>
+  }
+
+  <div class="mb-3">
+    <input
+      type="checkbox"
+      class="btn-check"
+      id="favourite"
+      formControlName="favourite"
+    />
+    <label
+      class="btn"
+      for="favourite"
+      [ngClass]="['btn' + (favourite.value ? '-danger' : '-outline-secondary')]"
+    >
+      {{ favourite.value ? "Remove from " : "Add to " }}
+      favourites
+    </label>
+  </div>
+
+  <div class="form-floating mb-3">
+    <input
+      type="text"
+      class="form-control"
+      id="title"
+      placeholder="Spaghetti Carbonara"
+      formControlName="title"
+    />
+    <label for="title">Title</label>
+
+    <app-validation-message [control]="title" [formName]="'Title'" />
+  </div>
+
+  <div class="form-floating mb-3">
+    <textarea
+      class="form-control"
+      placeholder="Classic Italian pasta dish."
+      id="description"
+      formControlName="description"
+    ></textarea>
+    <label for="description">Description</label>
+
+    <app-validation-message
+      [control]="description"
+      [formName]="'Description'"
+    />
+  </div>
+
+  <div class="form-floating mb-3">
+    <textarea
+      class="form-control"
+      placeholder="Boil pasta. Fry bacon. Mix eggs & cheese. Combine everything."
+      id="instructions"
+      formControlName="instructions"
+    ></textarea>
+    <label for="instructions">Instructions</label>
+
+    <app-validation-message
+      [control]="instructions"
+      [formName]="'Instruction'"
+    />
+  </div>
+
+  <div class="row mb-4 gy-3">
+    <div class="col-lg-3 col-sm-4 col-12">
+      <div class="preview-image border rounded p-2">
+        <img
+          [src]="imageUrl_backup() || 'images/no-image.jpg'"
+          (error)="onImageError()"
+          class="rounded"
+        />
+      </div>
+    </div>
+    <div class="col-lg-9 col-sm-8 col-12">
+      <div class="form-floating">
+        <input
+          type="text"
+          class="form-control"
+          id="imageUrl"
+          placeholder="http"
+          formControlName="imageUrl"
+          (input)="imageUrl_backup.set(imageUrl?.value.trim())"
+        />
+        <label for="imageUrl">Image URL</label>
+
+        <app-validation-message [control]="imageUrl" [formName]="'Image URL'" />
+      </div>
+    </div>
+  </div>
+
+  <section formArrayName="ingredients">
+    <h4>Ingredients ({{ ingredients.controls.length }})</h4>
+
+    @for(ingredient of ingredients.controls; track ingredient){
+    <!-- There is a reason for this, trust me -->
+
+    <div class="mb-3">
+      <div class="input-group">
+        <input
+          type="text"
+          class="form-control"
+          [id]="'ingredient-' + $index"
+          placeholder="Milk"
+          [formControlName]="$index"
+        />
+
+        @if(ingredients.controls.length !== 1){
+
+        <button
+          class="btn btn-danger"
+          type="button"
+          (click)="deleteIngredient($index)"
+        >
+          Delete
+        </button>
+        }
+      </div>
+
+      <app-validation-message
+        [control]="ingredients.get($index.toString())"
+        [formName]="'Ingredient'"
+      />
+    </div>
+
+    }
+    <button type="button" class="btn btn-primary" (click)="addIngredient()">
+      Add another ingredient
+    </button>
+  </section>
+
+  <div [ngClass]="{ 'd-flex': isEditing(), 'gap-3': isEditing() }">
+    <button
+      type="submit"
+      class="btn btn-primary mt-3 w-100"
+      [disabled]="isEditing() && isFormUnchanged()"
+    >
+      {{ isEditing() ? "Update the " : "Add new " }}
+      recipe
+    </button>
+
+    @if(isEditing()){
+
+    <button
+      type="button"
+      class="btn btn-danger mt-3 w-100"
+      (click)="deleteRecipe()"
+    >
+      Delete
+    </button>
+    }
+  </div>
+</form>

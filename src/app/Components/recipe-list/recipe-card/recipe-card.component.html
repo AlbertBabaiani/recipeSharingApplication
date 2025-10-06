@@ -1,0 +1,36 @@
+<div class="card mb-3 position-relative">
+  <button
+    class="favourite-icon"
+    type="button"
+    (click)="updateRecipeFavouriteStatus()"
+  >
+    <i
+      class="bi"
+      [ngClass]="['bi-heart' + (favouriteStatus() ? '-fill' : '')]"
+    ></i>
+  </button>
+
+  <div class="img-box">
+    <img
+      [src]="img"
+      (error)="onError()"
+      class="card-img-top"
+      [alt]="'Image of ' + recipe().title"
+    />
+  </div>
+
+  <div class="card-body">
+    <h5 class="card-title">{{ recipe().title | titlecase | truncate : 20 }}</h5>
+    <p class="card-text">
+      {{ recipe().description | truncate : 30 }}
+    </p>
+    <div class="d-flex mb-3 text-secondary">
+      <span>
+        {{ recipe().ingredients.length | i18nPlural : ingredientQuantity }}
+      </span>
+    </div>
+    <a [routerLink]="['/recipe', recipe().id]" class="btn btn-primary"
+      >See more details</a
+    >
+  </div>
+</div>

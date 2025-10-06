@@ -1,0 +1,45 @@
+<form (ngSubmit)="search()">
+  <div class="input-group">
+    <input
+      type="text"
+      class="form-control"
+      placeholder="Recipe or Ingredient name"
+      [(ngModel)]="search_value"
+      name="search"
+    />
+
+    <button
+      class="btn btn-primary"
+      type="submit"
+      [disabled]="!search_value()?.trim()?.length"
+    >
+      Search
+    </button>
+  </div>
+
+  <div class="d-flex gap-3 my-3">
+    <button
+      type="reset"
+      class="btn btn-outline-secondary"
+      routerLink="./"
+      [queryParams]="{ search: null }"
+      (click)="reset()"
+    >
+      Reset
+    </button>
+
+    <div>
+      <input
+        type="checkbox"
+        class="btn-check"
+        id="favourites-btn"
+        [(ngModel)]="favourite_status"
+        (ngModelChange)="favouriteSearching()"
+        name="favourites"
+      />
+      <label class="btn btn-outline-secondary" for="favourites-btn"
+        >Search by favourites
+      </label>
+    </div>
+  </div>
+</form>
